@@ -6,7 +6,7 @@ load_dotenv(override=True)
 
 
 class EnviarBanco:
-    """Gerencia as conexões com o banco de dados e envia todas as tabelas de dimensão e fato para o data warehouse."""
+    """A classe EnviarBanco gerencia as conexões com o banco de dados e envia todas as tabelas de dimensão e fato para o data warehouse."""
     def __init__(self):
         self.engine = self._conectar()
 
@@ -46,7 +46,7 @@ class EnviarBanco:
 
  
     def carregar_dimensoes(self,tabelas_dim: dict):
-        """Carrega todas tabelas de dimensão no banco de dados."""
+        """Este método é responsável por carregar todas tabelas de dimensão no banco de dados."""
         with self.engine.begin() as conn:
             for nome_tabela, df in tabelas_dim.items():
                 self._carregar_dimensao(df, nome_tabela, conn)
@@ -54,7 +54,7 @@ class EnviarBanco:
 
 
     def carregar_fato_vagas(self,tabela_fato,nome_tabela):
-        """Carrega a tabela de fatos no banco de dados."""
+        """Este método é responsável por carregar a tabela de fatos no banco de dados."""
         colunas = tabela_fato.columns.to_list()
         coluna_constraint = "vaga_id"
         colunas_sql = ", ".join(colunas)
@@ -74,7 +74,7 @@ class EnviarBanco:
 
     
     def carregar_bridge_skill(self,df_bridge,nome_tabela):
-        """Carrega a tabela de ponte no banco de dados."""
+        """Este método é responsável por carregar a tabela de ponte no banco de dados."""
         columns = df_bridge.columns.to_list()
         colunas_sql = ", ".join(columns)
         valores_sql = ", ".join([f":{col}" for col in columns])

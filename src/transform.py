@@ -1,12 +1,11 @@
 
 import pandas as pd
 import numpy as np
-from extract import RemotiveExtractor
-from load import EnviarBanco
 
 
 
 class TransformarDados:
+    """Esta classe define os métodos e atributos necessários para a etapa de transformação e modelagem dos dados."""
     def __init__(self, dados,engine):
         self.dados = dados
         self.df_origem = None
@@ -17,7 +16,7 @@ class TransformarDados:
 
 
     def trat_dados_origem(self):
-        """Realiza o tratamento geral da base de dados antes da criação das dimensões e fato, como mundança de tipos e padronização de valores."""
+        """Este método realiza o tratamento geral da base de dados antes da criação das dimensões e fato, como mundança de tipos e padronização de valores."""
         df = pd.DataFrame(self.dados)
         df_origem = df.copy()
         df_origem.columns
@@ -71,7 +70,7 @@ class TransformarDados:
     # Tratamento
 
     def criar_dim_empresa(self):
-        """Cria a tabela de dimensão com o id e nome de cada empresa."""
+        """Este método é responsável por criar a tabela de dimensão com o id e nome de cada empresa."""
         dim_empresa = (
             self.df_origem[["company_name"]]
             .drop_duplicates()
@@ -81,13 +80,13 @@ class TransformarDados:
 
     
     def explodir_skills(self):
-        """Separa a coluna de tags em uma linha por skill (explode)."""
+        """Este método é responsável por separar a coluna de tags em uma linha por skill (explode)."""
         self.df_exploded = self.df_origem.explode('tags').reset_index(drop=True)
         return self.df_exploded
 
 
     def criar_dim_skill(self):
-        """Cria a tabela de dimensão com o id e nome de cada skill."""
+        """Este método é responsável por criar a tabela de dimensão com o id e nome de cada skill."""
 
         dim_skill = (
         self.df_exploded[["tags"]]
@@ -100,7 +99,7 @@ class TransformarDados:
         return dim_skill
 
     def criar_dim_categoria(self):
-        """Cria a tabela de dimensão com o id e nome de cada categoria pertencente à vaga."""
+        """Este método é responsável por criar a tabela de dimensão com o id e nome de cada categoria pertencente à vaga."""
         dim_categoria = (
             self.df_origem[["category"]]
             .drop_duplicates()
@@ -111,7 +110,7 @@ class TransformarDados:
         return dim_categoria 
 
     def criar_dim_localizacao(self):
-        """Cria a tabela de dimensão com o id e nome de cada região."""
+        """Este método é responsável por criar a tabela de dimensão com o id e nome de cada região."""
         dim_local = ( 
             self.df_origem[["candidate_required_location"]]
             .drop_duplicates()
@@ -124,7 +123,7 @@ class TransformarDados:
 
 
     def buscar_dimensoes(self):
-        """Busca todas as tabelas de dimensão do banco e retorna num dicionário."""
+        """Este método é responsável por realizarf a busca de todas as tabelas de dimensão do banco e retorná-las em um dicionário."""
         dim_empresa = pd.read_sql("SELECT * FROM dim_empresa", self.engine)
         dim_categoria = pd.read_sql("SELECT * FROM dim_categoria", self.engine)
         dim_skill = pd.read_sql("SELECT * FROM dim_skill", self.engine)
@@ -142,7 +141,7 @@ class TransformarDados:
 
 
     def criar_fato(self,dimensoes):
-        """Cria a tabela de eventos das vagas, contendo os ids das dimensoes( tabela principal)"""
+        """Este método é responsável por criar a tabela de eventos das vagas, contendo os ids das dimensoes( tabela principal)"""
         dim_empresa = dimensoes["dim_empresa"]
         dim_local = dimensoes["dim_local"]
         dim_categoria = dimensoes["dim_categoria"]
@@ -174,7 +173,7 @@ class TransformarDados:
 
 
     def criar_bridge_skills(self,df_skill):
-        """Cria a tabela de ponte entre as skills e as vagas, permitindo relacioná-las."""
+        """Este método é responsável por criar a tabela de ponte entre as skills e as vagas, permitindo relacioná-las."""
 
         df_bridge_skills = (
             self.df_exploded.merge(
