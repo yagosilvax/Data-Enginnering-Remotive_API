@@ -26,6 +26,8 @@ try:
         extrator = RemotiveExtractor()
         dados = extrator.extrair_dados()
         logger.info("Dados extraídos com sucesso!\n")
+        extrator.salvar_dados(dados)
+        logger.info("Dados brutos salvos na pasta.")
     except Exception as e:
         logger.critical(f"Extração interrompida: {e}")
         raise  

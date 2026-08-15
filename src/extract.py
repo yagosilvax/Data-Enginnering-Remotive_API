@@ -19,11 +19,9 @@ class RemotiveExtractor:
         except Exception:
             raise
 
-    def salvar_dados(self):
-
-        dados = self.extrair_dados()
+    def salvar_dados(self,dados):
         with open(self.output_path,'w') as file:
-            json.dump(json,file,indent=4)
-            return dados
+            json.dump(dados,file,indent=4)
+
 
 
